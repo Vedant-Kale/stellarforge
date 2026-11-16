@@ -6,6 +6,39 @@ It learns each person's own normal, flags drift before it becomes a problem, and
 
 > **Decision support, not diagnosis.** Rules and published guidelines decide. Models detect and forecast. The language model only explains. Prototype for a hackathon; the medical content has not been clinically reviewed. Not medical advice.
 
+## My role: Vedant Kale
+
+> Personal copy of the team repo [SCAPE-NASA/stellarforge](https://github.com/SCAPE-NASA/stellarforge) (`main`), with full commit history. StellarForge was built by a team and **submitted to the NASA Space Apps Challenge 2026**. This section describes my part; the rest of the README is the team's.
+
+**Role:** idea owner, team lead for work delegation, and AI / detection lead. About 76 commits, the second-highest on the team.
+
+### What I did
+
+- **Idea and planning.** Shaped the overall idea: an offline, per-person health tool for non-doctor crews, with a cited emergency flow and a Mars-delay ground report. Split the work into five specs and delegated them across the team.
+- **Spec 3: detection and forecast core (built).**
+  - Personal baselines (14-day Anchor, 28-day adaptive window), Acute and Drift alerts, Quarantine, Status, and the daily briefing (`backend/detection.py`).
+  - Emergency auto-trigger rule and likely-cause ranking, with heart-rate cut-offs checked against the AHA 2025 bradycardia and tachyarrhythmia algorithms.
+  - Forecast B: tomorrow's readiness with a range and its drivers.
+  - Tuned the cut-offs against golden replays and wrote the accuracy page ([docs/accuracy.md](docs/accuracy.md)).
+- **Spec 2 upgrade.** Joint-pattern anomaly detector and per-person action-plan learning on top of the crew-data daily loop.
+- **Spec 4: medical content.** Full microgravity CPR protocol and chest-pain phase, Safety bounds (glucose, temperature), an ISS-sourced drug blocklist, the Mars transit mission profile, six measurement cards, and the content linter rules that enforce citations and bounds.
+- **Spec 5: integration and submission.** Merged all specs, ran the end-to-end golden run on real content (both triggers, offline), recorded the backup demo, and wrote the write-up and video script.
+- **Webcam heart rate.** Classic rPPG heart-rate estimate from a webcam (`backend/webcam_hr.py`), measured on the UBFC-rPPG dataset.
+
+### Results (from [docs/accuracy.md](docs/accuracy.md), measured on datasets, not on astronauts)
+
+| What | Result |
+|---|---|
+| False alerts (drift + acute) | 0.16 per crew-day across 567 crew-days |
+| Joint-pattern detector | 0.009 false alerts per crew-day, about 20 times quieter than the per-indicator detector |
+| Readiness forecast | 1.12 points mean error on a 0–10 scale; range covers the true value 89.6 % of the time |
+| Action-plan learning | Reversed 64 % of drifts vs 52 % for the best fixed plan (simulated response) |
+| Webcam heart rate | 4.9 bpm mean error on 5 UBFC-rPPG subjects |
+
+All numbers are labelled "estimate, not validated", and the known limits are listed in [docs/accuracy.md](docs/accuracy.md).
+
+**Skills:** Python, FastAPI, SQLite, React / TypeScript, Three.js, signal processing (rPPG), anomaly detection, forecasting, contextual bandits, local LLMs (Ollama), Playwright e2e tests, team leadership.
+
 ## How it works
 
 Everything is **replay-first**: the web app runs from JSON replay files alone, and an optional local service plays the part of the habitat network.
